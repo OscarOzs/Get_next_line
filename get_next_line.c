@@ -5,103 +5,95 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/05 15:40:44 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/01/15 15:00:32 by oozsertt         ###   ########.fr       */
+/*   Created: 2021/01/18 15:49:02 by oozsertt          #+#    #+#             */
+/*   Updated: 2021/01/20 17:23:32 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
+#define BUFFER_SIZE 10
 
-#define BUFFER_SIZE 32
-
-t_list	*ft_newfile(int fd)
+int		ft_is_end_of_file(char *buffer, int fd)
 {
-	t_list	*new_file;
-
-	new_file = (t_list*)malloc(sizeof(t_list));
-	if (new_file == NULL)
-		return (NULL);
-	new_file->fd = fd;
-	new_file->next = NULL;
-	return (new_file);
+	char *temp;
+	
+	if (ft_strchr(buffer, '\0') != NULL)
+		return (TRUE);
+	else
+		return (FALSE);
 }
 
-char	*ft_fill_line(char *line, int fd, char *buffer, t_list *file)
+char	*ft_fill_stock(char *buffer, char *stock)
 {
-	if (ft_strchr(buffer, '\n') == NULL)
+	char	*stock_updated;
+
+	if (ft_strdup(buffer) == NULL)
+		return (NULL);
+	if (stock != NULL)
 	{
-		line = ft_custom_strjoin(buffer, line);
-		return (line);
-	}
-	if (ft_strchr(buffer, '\n') != NULL)
-	{
-		if (file->after_newline != NULL)
-		{
-			printf("%s\n", file->after_newline);
-			line = ft_custom_strjoin(buffer, file->after_newline);
-			file->after_newline = ft_strchr(buffer, '\n');
-		}
-		else
-			line = ft_custom_strjoin(buffer, line);
-		return (line);
-	}
-	// if (ft_strchr(buffer, '\0') != NULL)
-	// {
 		
-	// }
-	return (NULL);
+		if ((stock_updated = ft_strjoin(buffer, stock)) == NULL)
+			return (NULL);
+		ft_memset(buffer, '\0', BUFFER_SIZE);
+		return (stock_updated);
+	}
+	else
+	{
+		if ((stock_updated = ft_strdup(buffer)) == NULL)
+			return (NULL);
+		return (stock_updated);
+	}
+	free(buffer);
+	return (stock_updated);
 }
 
 int		get_next_line(int fd, char **line)
 {
-	static t_list	*file = NULL;
-	char			buffer[BUFFER_SIZE + 1];
-	t_list			*tmp;
-	size_t			len;
+	static char	*stock;
+	char		buffer[BUFFER_SIZE + 1];
+	int len;
 
-	if (fd < 0 || BUFFER_SIZE < 1 || line == NULL || (*line = (char*)malloc(sizeof(char))) == NULL)
+	if (fd < 0 || BUFFER_SIZE < 1)
 		return (-1);
-	line[0][0] = '\0';
-	tmp = file;
-	ft_memset(buffer, '\0', BUFFER_SIZE + 1);
-	if (file == NULL && (len = read(fd, buffer, BUFFER_SIZE)) > 0)
+	len = read(fd, buffer, BUFFER_SIZE);
+	buffer[len] = '\0';
+	while ((ft_strchr(buffer, '\n')) == NULL)
 	{
+		if ((stock = ft_fill_stock(buffer, stock)) == NULL)
+			return (-1);
+		len = read(fd, buffer, BUFFER_SIZE);
 		buffer[len] = '\0';
-		file = (t_list*)malloc(sizeof(t_list));
-		file->fd = fd;
-		file->next = NULL;
-		*line = ft_fill_line(*line, fd, buffer, file);
+	}
+	if (ft_is_end_of_file(buffer, fd) == TRUE)
+	{
+		*line = ft_strjoin(stock, buffer);
+		free(stock);
+		return (0);
+	}
+	else
+	{
+		*line = ft_strjoin(stock, buffer);
 		return (1);
 	}
-	while (file != NULL)
-	{
-		if (file->next == NULL && (len = read(fd, buffer, BUFFER_SIZE)) > 0)
-		{
-			buffer[len] = '\0';
-			file->next = ft_newfile(fd);
-			*line = ft_fill_line(*line, fd, buffer, file);
-			return (1);
-		}
-		file = file->next;
-	}
-	return (-1);
 }
 
 int main(int ac, char **av)
 {
-	char *line;
+	char **line;
 	int fd;
 
-
 	fd = open(av[1], O_RDONLY);
-	while ((get_next_line(fd, &line) > 0))
+	if (fd == -1)
 	{
-		printf("main : %s\n", line);
+		printf("error");
+		return (0);
+	}
+	while (get_next_line(fd, line) > 0)
+	{
+		printf("%s", *line);
 		free(line);
 	}
+
+	close(fd);
+	return (0);
 }

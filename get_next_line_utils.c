@@ -5,22 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/11 12:06:11 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/01/15 13:31:42 by oozsertt         ###   ########.fr       */
+/*   Created: 2021/01/18 15:48:59 by oozsertt          #+#    #+#             */
+/*   Updated: 2021/01/20 15:56:20 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-int	ft_linelen(char *str)
-{
-	int i;
-
-	i = 0;
-	while (str[i] != '\0' && str[i] != '\n')
-		i++;
-	return (i);
-}
 
 size_t	ft_strlen(const	char *s)
 {
@@ -30,6 +20,22 @@ size_t	ft_strlen(const	char *s)
 	while (s[i] != '\0')
 		i++;
 	return (i);
+}
+
+void	*ft_memset(void *b, int c, size_t len)
+{
+	size_t			i;
+	char			*tempfill;
+
+	i = 0;
+	tempfill = b;
+	while (i < len)
+	{
+		*tempfill = c;
+		i++;
+		tempfill++;
+	}
+	return (b);
 }
 
 char	*ft_strchr(const char *s, int c)
@@ -56,33 +62,40 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-void	*ft_memset(void *b, int c, size_t len)
+char	*ft_strdup(const char *s1)
 {
-	size_t			i;
-	char			*tempfill;
+	int		len;
+	int		i;
+	char	*str;
 
+	len = 0;
+	while (s1[len] != '\0')
+		len++;
+	str = (char*)malloc(sizeof(char) * len + 1);
+	if (str == NULL)
+		return (NULL);
+	str[len] = '\0';
 	i = 0;
-	tempfill = b;
-	while (i < len)
+	while (s1[i] != '\0')
 	{
-		*tempfill = c;
+		str[i] = s1[i];
 		i++;
-		tempfill++;
 	}
-	return (b);
+	return (str);
 }
 
-char	*ft_custom_strjoin(char *s1, char *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*finalstr;
 	size_t	finalstr_len;
 	int		j;
 	int		i;
+
 	if (s1 == NULL && s2 == NULL)
 		return (NULL);
 	else if (s1 == NULL)
 		finalstr_len = ft_strlen(s2);
-	else if (s2 == NULL)
+	if (s2 == NULL)
 		finalstr_len = ft_strlen(s1);
 	else
 		finalstr_len = ft_strlen(s1) + ft_strlen(s2);
