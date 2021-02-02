@@ -6,7 +6,7 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:49:02 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/02/02 16:00:15 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/02/02 16:15:33 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,21 @@ int		ft_replace_char(char *str, char old, char new)
 	return (0);
 }
 
-char	*ft_get_line()
+char	*ft_get_line(char *buffer, char **temp, char *stock, int *eof)
 {
+	int		i;
+	char	*temp2;
+
+	temp2 = ft_strdup(*temp);
+	free(*temp);
+	i = 0;
+	while (temp[i] != '\0' && temp[i] != '\n')
+		i++;
+	if (temp[i] == '\0')
+	{
+		*eof = 1;
+		
+	}
 	
 }
 
