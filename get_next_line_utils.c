@@ -6,7 +6,7 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:48:59 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/01/20 15:56:20 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/02/02 14:13:34 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,15 @@ void	*ft_memset(void *b, int c, size_t len)
 	return (b);
 }
 
-char	*ft_strchr(const char *s, int c)
+char	*ft_strchr_gnl(const char *s, int c)
 {
 	int		i;
 	char	*res;
 
 	i = 0;
 	res = NULL;
+	if (s == NULL)
+		return (NULL);
 	while (s[i] != '\0')
 	{
 		if (s[i] == (unsigned char)c)
@@ -95,7 +97,7 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (NULL);
 	else if (s1 == NULL)
 		finalstr_len = ft_strlen(s2);
-	if (s2 == NULL)
+	else if (s2 == NULL)
 		finalstr_len = ft_strlen(s1);
 	else
 		finalstr_len = ft_strlen(s1) + ft_strlen(s2);
@@ -104,10 +106,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	finalstr[finalstr_len] = '\0';
 	i = 0;
 	j = 0;
-	while (s1[j] != '\0')
+	while (s1 && s1[j] != '\0')
 		finalstr[i++] = s1[j++];
 	j = 0;
-	while (s2[j] != '\0')
+	while (s2 && s2[j] != '\0')
 		finalstr[i++] = s2[j++];
 	return (finalstr);
 }

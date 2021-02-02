@@ -6,81 +6,130 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:49:02 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/01/20 17:23:32 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/02/02 16:00:15 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#define BUFFER_SIZE 10
+#define BUFFER_SIZE 5
 
-int		ft_is_end_of_file(char *buffer, int fd)
+char	*ft_strcat_gnl(char *s1, char *s2)
 {
-	char *temp;
-	
-	if (ft_strchr(buffer, '\0') != NULL)
-		return (TRUE);
-	else
-		return (FALSE);
+	char	*finalstr;
+	int		finalstr_len;
+	int		i;
+	int		j;
+
+	finalstr_len = ft_strlen(s1) + ft_strlen(s2);
+	finalstr = (char*)malloc(sizeof(char) * finalstr_len + 1);
+	if (finalstr == NULL)
+		return (NULL);
+	finalstr[finalstr_len] = '\0';
+	j = 0;
+	i = 0;
+	while (s1[j] != '\0')
+	{
+		finalstr[i] = s1[j];
+		i++;
+		j++;
+	}
+	j = 0;
+	while (s2[j] != '\0')
+	{
+		finalstr[i] = s2[j];
+		i++;
+		j++;
+	}
+	return (finalstr);
 }
 
-char	*ft_fill_stock(char *buffer, char *stock)
+int		ft_fill_line(char *buffer, char *stock, char **temp)
 {
-	char	*stock_updated;
+	char	*temp2 = NULL;
 
-	if (ft_strdup(buffer) == NULL)
-		return (NULL);
+	if (*temp != NULL)
+	{
+		if ((temp2 = ft_strdup(*temp)) == NULL)
+			return (-1);
+		free(*temp);
+	}
 	if (stock != NULL)
 	{
-		
-		if ((stock_updated = ft_strjoin(buffer, stock)) == NULL)
-			return (NULL);
-		ft_memset(buffer, '\0', BUFFER_SIZE);
-		return (stock_updated);
+		if ((*temp = ft_strjoin(stock, buffer)) == NULL)
+			return (-1);
 	}
-	else
+	else if (temp2 == NULL)
 	{
-		if ((stock_updated = ft_strdup(buffer)) == NULL)
-			return (NULL);
-		return (stock_updated);
+		if ((*temp = ft_strdup(buffer)) == NULL)
+			return (-1);
 	}
-	free(buffer);
-	return (stock_updated);
+	if (temp2 != NULL)
+	{
+		if ((*temp = ft_strcat_gnl(temp2, buffer)) == NULL)
+			return (-1);
+		free(temp2);
+	}
+	return (1);
+}
+
+int		ft_replace_char(char *str, char old, char new)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] == old)
+		{
+			str[i] = new;
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+char	*ft_get_line()
+{
+	
 }
 
 int		get_next_line(int fd, char **line)
 {
-	static char	*stock;
+	static char	*stock = NULL;
 	char		buffer[BUFFER_SIZE + 1];
-	int len;
+	char		*temp_gnl = NULL;
+	int			len;
+	int			end_of_file;
 
-	if (fd < 0 || BUFFER_SIZE < 1)
+	if (!line || fd < 0 || BUFFER_SIZE < 1)
 		return (-1);
-	len = read(fd, buffer, BUFFER_SIZE);
-	buffer[len] = '\0';
-	while ((ft_strchr(buffer, '\n')) == NULL)
+	ft_memset(buffer, '\0', BUFFER_SIZE + 1);
+	len = 1;
+	while (ft_strchr_gnl(buffer, '\n') == NULL && len != 0)
 	{
-		if ((stock = ft_fill_stock(buffer, stock)) == NULL)
-			return (-1);
 		len = read(fd, buffer, BUFFER_SIZE);
+		if (len < 0)
+			return (-1);
 		buffer[len] = '\0';
+		if (ft_fill_line(buffer, stock, &temp_gnl) == -1)
+			return (-1);
 	}
-	if (ft_is_end_of_file(buffer, fd) == TRUE)
-	{
-		*line = ft_strjoin(stock, buffer);
-		free(stock);
+	*line = ft_get_line(buffer, &temp_gnl, stock, &end_of_file);
+	free(temp_gnl);
+	if (*line == NULL)
+		return (-1);
+	if (end_of_file == 1)
 		return (0);
-	}
-	else
-	{
-		*line = ft_strjoin(stock, buffer);
-		return (1);
-	}
+	return (1);
 }
 
 int main(int ac, char **av)
 {
-	char **line;
+	char *line;
 	int fd;
+	(void)ac;
+	int r = 1;
 
 	fd = open(av[1], O_RDONLY);
 	if (fd == -1)
@@ -88,12 +137,12 @@ int main(int ac, char **av)
 		printf("error");
 		return (0);
 	}
-	while (get_next_line(fd, line) > 0)
+	while (r != 0)
 	{
-		printf("%s", *line);
+		r = get_next_line(fd, &line);
+		printf("%s", line);
 		free(line);
 	}
-
 	close(fd);
 	return (0);
 }

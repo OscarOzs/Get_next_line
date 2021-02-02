@@ -6,7 +6,7 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:49:04 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/01/20 14:30:48 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/01/29 13:42:12 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,11 @@
 # include <stdio.h>
 
 int		get_next_line(int fd, char **line);
-char	*ft_strchr(const char *s, int c);
-char	*ft_strdup(const char *s1);
-void	*ft_memset(void *b, int c, size_t len);
+char	*ft_strchr_gnl(const char *s, int c);
 char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strdup(const char *s1);
+size_t	ft_strlen(const	char *s);
+void	*ft_memset(void *b, int c, size_t len);
 
 
 #endif
