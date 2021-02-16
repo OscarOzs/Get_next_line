@@ -6,15 +6,13 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:49:04 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/01/29 13:42:12 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/02/16 15:38:23 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# define TRUE 1
-# define FALSE 0
 # define DEBUG printf("ICI\n");
 
 #include <sys/types.h>
