@@ -6,12 +6,11 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 10:01:26 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/03/12 14:38:06 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/03/15 09:57:22 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#define BUFFER_SIZE 5
 
 char	*ft_strcat_gnl(char *s1, char *s2)
 {
@@ -123,27 +122,4 @@ int		get_next_line(int fd, char **line)
 	if (end_of_file == 1)
 		return (0);
 	return (1);
-}
-
-int main(int ac, char **av)
-{
-	char *line;
-	int fd;
-	(void)ac;
-	int r = 1;
-
-	fd = open(av[1], O_RDONLY);
-	if (fd == -1)
-	{
-		printf("error");
-		return (0);
-	}
-	while (r > 0)
-	{
-		r = get_next_line(fd, &line);
-		printf("%s", line);
-		free(line);
-	}
-	close(fd);
-	return (0);
 }
