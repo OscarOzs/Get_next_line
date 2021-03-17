@@ -6,7 +6,7 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 10:01:26 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/03/17 10:36:49 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/03/17 10:38:03 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,33 +143,4 @@ int		get_next_line(int fd, char **line)
 	if (end_of_file == 1)
 		return (0);
 	return (1);
-}
-
-int main(int ac, char **av)
-{
-	int fd;
-	char *line;
-	int r;
-
-	(void)ac;
-	r = 1;
-	fd = open(av[1], O_RDONLY);
-	if (fd == -1)
-	{
-		printf("error\n");
-		return (0);
-	}
-
-	while (r != 0 && r != -1)
-	{
-		r = get_next_line(fd, &line);
-		printf("%s", line);
-		free(line);
-	}
-	
-	if (close(fd) == -1)
-	{
-		printf("close failed\n");
-		return (0);
-	}
 }
