@@ -6,12 +6,12 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 10:01:26 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/03/17 16:50:23 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/03/18 15:25:52 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 1
 
 char	*ft_strcat_gnl(char *s1, char *s2)
 {
@@ -37,7 +37,7 @@ char	*ft_strcat_gnl(char *s1, char *s2)
 	return (finalstr);
 }
 
-int		ft_fill_line(char *buffer, char *stock, char **temp)
+int		ft_fill_line(char *buffer, char **stock, char **temp)
 {
 	char	*temp2;
 
@@ -50,11 +50,11 @@ int		ft_fill_line(char *buffer, char *stock, char **temp)
 			return (-1);
 		free(temp2);
 	}
-	else if (stock != NULL)
+	else if (*stock != NULL)
 	{
-		if ((*temp = ft_strjoin(stock, buffer)) == NULL)
+		if ((*temp = ft_strjoin(*stock, buffer)) == NULL)
 			return (-1);
-		free(stock);
+		free(*stock);
 	}
 	else
 	{
@@ -64,7 +64,7 @@ int		ft_fill_line(char *buffer, char *stock, char **temp)
 	return (1);
 }
 
-void	ft_update_line_and_stock(char *line, char *stock, char *temp)
+void	ft_update_line_and_stock(char *line, char **stock, char *temp)
 {
 	int		i;
 	int		j;
@@ -75,17 +75,16 @@ void	ft_update_line_and_stock(char *line, char *stock, char *temp)
 		line[i] = temp[i];
 		i++;
 	}
-	line[i] = temp[i];
-	i++;
 	line[i] = '\0';
+	i++;
 	j = 0;
 	while (temp[i] != '\0')
 	{
-		stock[j] = temp[i];
+		*stock[j] = temp[i];
 		i++;
 		j++;
 	}
-	stock[j] = '\0';
+	*stock[j] = '\0';
 }
 
 int		ft_get_line(char **line, char **stock, int *eof)
@@ -102,14 +101,14 @@ int		ft_get_line(char **line, char **stock, int *eof)
 		i = 0;
 		while (temp[i] != '\n')
 			i++;
-		if ((*line = (char*)malloc(sizeof(char) * i + 2)) == NULL)
+		if ((*line = (char*)malloc(sizeof(char) * i + 1)) == NULL)
 			return (-1);
 		j = 0;
 		while (temp[++i] != '\0')
 			j++;
 		if ((*stock = (char*)malloc(sizeof(char) * j + 1)) == NULL)
 			return (-1);
-		ft_update_line_and_stock(*line, *stock, temp);
+		ft_update_line_and_stock(*line, stock, temp);
 		free(temp);
 	}
 	else if (ft_strchr_gnl(*line, '\0') != NULL)
@@ -135,43 +134,12 @@ int		get_next_line(int fd, char **line)
 		if (len < 0)
 			return (-1);
 		buffer[len] = '\0';
-		if (ft_fill_line(buffer, stock, line) == -1)
+		if (ft_fill_line(buffer, &stock, line) == -1)
 			return (-1);
-		// printf("%s", buffer);
-		// printf("%s", ft_strchr_gnl(buffer, '\n'));
 	}
 	if (ft_get_line(line, &stock, &end_of_file) == -1)
 		return (-1);
 	if (end_of_file == 1)
 		return (0);
 	return (1);
-}
-
-int main(int ac, char **av)
-{
-	int fd;
-	char *line;
-	int r;
-
-	(void)ac;
-	r = 1;
-	fd = open(av[1], O_RDONLY);
-	if (fd == -1)
-	{
-		printf("error\n");
-		return (0);
-	}
-
-	while (r != 0 && r != -1)
-	{
-		r = get_next_line(fd, &line);
-		printf("%s", line);
-		free(line);
-	}
-	
-	if (close(fd) == -1)
-	{
-		printf("close failed\n");
-		return (0);
-	}
 }
