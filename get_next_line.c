@@ -6,12 +6,11 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 10:01:26 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/03/18 15:25:52 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/03/24 11:59:18 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#define BUFFER_SIZE 1
 
 char	*ft_strcat_gnl(char *s1, char *s2)
 {
@@ -37,34 +36,35 @@ char	*ft_strcat_gnl(char *s1, char *s2)
 	return (finalstr);
 }
 
-int		ft_fill_line(char *buffer, char **stock, char **temp)
+int		ft_fill_line(char **line, char *buffer, char **stock)
 {
-	char	*temp2;
+	char *temp;
 
-	if (*temp != NULL)
+	if (*stock != NULL)
 	{
-		if ((temp2 = ft_strdup(*temp)) == NULL)
-			return (-1);
-		free(*temp);
-		if ((*temp = ft_strcat_gnl(temp2, buffer)) == NULL)
-			return (-1);
-		free(temp2);
-	}
-	else if (*stock != NULL)
-	{
-		if ((*temp = ft_strjoin(*stock, buffer)) == NULL)
+		if ((*line = ft_strcat_gnl(*stock, buffer)) == NULL)
 			return (-1);
 		free(*stock);
+		*stock = NULL;
+	}
+	else if (*line != NULL)
+	{
+		if ((temp = ft_strdup(*line)) == NULL)
+			return (-1);
+		free(*line);
+		if ((*line = ft_strjoin(temp, buffer)) == NULL)
+			return (-1);
+		free(temp);
 	}
 	else
 	{
-		if ((*temp = ft_strdup(buffer)) == NULL)
+		if ((*line = ft_strdup(buffer)) == NULL)
 			return (-1);
 	}
 	return (1);
 }
 
-void	ft_update_line_and_stock(char *line, char **stock, char *temp)
+void	ft_update_line_and_stock(char *line, char *stock, char *temp)
 {
 	int		i;
 	int		j;
@@ -80,11 +80,11 @@ void	ft_update_line_and_stock(char *line, char **stock, char *temp)
 	j = 0;
 	while (temp[i] != '\0')
 	{
-		*stock[j] = temp[i];
+		stock[j] = temp[i];
 		i++;
 		j++;
 	}
-	*stock[j] = '\0';
+	stock[j] = '\0';
 }
 
 int		ft_get_line(char **line, char **stock, int *eof)
@@ -108,7 +108,7 @@ int		ft_get_line(char **line, char **stock, int *eof)
 			j++;
 		if ((*stock = (char*)malloc(sizeof(char) * j + 1)) == NULL)
 			return (-1);
-		ft_update_line_and_stock(*line, stock, temp);
+		ft_update_line_and_stock(*line, *stock, temp);
 		free(temp);
 	}
 	else if (ft_strchr_gnl(*line, '\0') != NULL)
@@ -134,7 +134,7 @@ int		get_next_line(int fd, char **line)
 		if (len < 0)
 			return (-1);
 		buffer[len] = '\0';
-		if (ft_fill_line(buffer, &stock, line) == -1)
+		if (ft_fill_line(line, buffer, &stock) == -1)
 			return (-1);
 	}
 	if (ft_get_line(line, &stock, &end_of_file) == -1)
