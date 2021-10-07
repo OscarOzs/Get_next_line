@@ -6,7 +6,7 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 10:01:26 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/03/24 11:59:18 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/10/07 14:42:27 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*ft_strcat_gnl(char *s1, char *s2)
 	if (s1 == NULL || s2 == NULL)
 		return (NULL);
 	finalstr_len = ft_strlen(s1) + ft_strlen(s2);
-	finalstr = (char*)malloc(sizeof(char) * finalstr_len + 1);
+	finalstr = (char *)malloc(sizeof(char) * finalstr_len + 1);
 	if (finalstr == NULL)
 		return (NULL);
 	finalstr[finalstr_len] = '\0';
@@ -36,29 +36,33 @@ char	*ft_strcat_gnl(char *s1, char *s2)
 	return (finalstr);
 }
 
-int		ft_fill_line(char **line, char *buffer, char **stock)
+int	ft_fill_line(char **line, char *buffer, char **stock)
 {
-	char *temp;
+	char	*temp;
 
 	if (*stock != NULL)
 	{
-		if ((*line = ft_strcat_gnl(*stock, buffer)) == NULL)
+		*line = ft_strcat_gnl(*stock, buffer);
+		if (*line == NULL)
 			return (-1);
 		free(*stock);
 		*stock = NULL;
 	}
 	else if (*line != NULL)
 	{
-		if ((temp = ft_strdup(*line)) == NULL)
+		temp = ft_strdup(*line);
+		if (temp == NULL)
 			return (-1);
 		free(*line);
-		if ((*line = ft_strjoin(temp, buffer)) == NULL)
+		*line = ft_strjoin(temp, buffer);
+		if (*line == NULL)
 			return (-1);
 		free(temp);
 	}
 	else
 	{
-		if ((*line = ft_strdup(buffer)) == NULL)
+		*line = ft_strdup(buffer);
+		if (*line == NULL)
 			return (-1);
 	}
 	return (1);

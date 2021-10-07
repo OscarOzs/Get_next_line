@@ -6,7 +6,7 @@
 /*   By: oozsertt <oozsertt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 10:01:28 by oozsertt          #+#    #+#             */
-/*   Updated: 2021/03/24 11:49:18 by oozsertt         ###   ########.fr       */
+/*   Updated: 2021/10/07 14:39:33 by oozsertt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+
+# define BUFFER_SIZE 1
+# define TRUE 1
+# define FALSE 0
+# define ERROR -1
 
 int		get_next_line(int fd, char **line);
 char	*ft_strchr_gnl(const char *s, int c);
